@@ -21,9 +21,18 @@ for x in range(9):
 		button[str(x)+' '+str(y)]=pygame.draw.rect(screen, (176, 175, 178),(x1,y0,60,60))
 		x1=x1+65
 	y0=y0+65
-myfont = pygame.font.SysFont('Comic Sans MS', 30)
 
 pygame.display.update()
+
+def text_objects(text,font,color):
+	textSurface = font.render(text,True,color)
+	return textSurface, textSurface.get_rect()
+
+def createText(text,font,size,color,x,y):
+	largeText = pygame.font.Font(font, size)
+	TextSurf, TextRect = text_objects(text,largeText,color)
+	TextRect.center=x,y
+	screen.blit(TextSurf,TextRect)
 
 running = True
 while running:
@@ -40,7 +49,14 @@ while running:
 						print(button[str(x)+" "+str(y)])
 						xo[x][y]=1
 						print(xo)
-						button[str(x)+' '+str(y)]=pygame.draw.rect(screen, (255, 0, 0),(button[str(x)+" "+str(y)][0],button[str(x)+" "+str(y)][1],60,60))
+						# X
+						# createText("X","freesansbold.ttf",50,(0,0,0),int(button[str(x)+" "+str(y)][0])+30,float(button[str(x)+" "+str(y)][1])+32.5)
+						
+						# O
+						createText("O","freesansbold.ttf",50,(0,0,0),int(button[str(x)+" "+str(y)][0])+30,float(button[str(x)+" "+str(y)][1])+32.5)
+						
+						# textRect.left= button[str(x)+" "+str(y)][0]
+						# button[str(x)+' '+str(y)]=pygame.draw.rect(screen, (255, 0, 0),(button[str(x)+" "+str(y)][0],button[str(x)+" "+str(y)][1],60,60))
 						breakmaster=True
 						break
 				if breakmaster==True:
