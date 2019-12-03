@@ -6,7 +6,7 @@ screen=pygame.display.set_mode((1280,720))
 pygame.display.set_caption("Tic Tac Toe")
 screen.fill((255,255,255))
 
-xo=[[None]*9]*9
+xo=[[None for j in range(9)] for i in range(9)]
 kotak=dict()
 button=dict()
 x0=350
@@ -32,6 +32,8 @@ while running:
 			running = False
 		elif event.type == pygame.MOUSEBUTTONDOWN and event.button == 1:
 			pos = pygame.mouse.get_pos()
+			seek=True
+			breakmaster=False
 			for x in range(9):
 				for y in range(9):
 					if button[str(x)+" "+str(y)].collidepoint(pos):
@@ -39,5 +41,8 @@ while running:
 						xo[x][y]=1
 						print(xo)
 						button[str(x)+' '+str(y)]=pygame.draw.rect(screen, (255, 0, 0),(button[str(x)+" "+str(y)][0],button[str(x)+" "+str(y)][1],60,60))
+						breakmaster=True
 						break
+				if breakmaster==True:
+					break
 	pygame.display.update()
