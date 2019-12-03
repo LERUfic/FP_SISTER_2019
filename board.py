@@ -35,9 +35,41 @@ class TicTacToe:
         TextRect.center=x,y
         self.screen.blit(TextSurf,TextRect)
 
+    def getLatestBoard(self):
+        testing_board=[[None for j in range(9)] for i in range(9)]
+        testing_board[1][1] = 1
+        testing_board[4][2] = 1
+        testing_board[6][3] = 1
+        testing_board[1][4] = 1
+        testing_board[2][8] = 1
+
+        testing_board[8][5] = 2
+        testing_board[7][6] = 2
+        testing_board[1][7] = 2
+        testing_board[1][2] = 2
+        testing_board[4][3] = 2
+
+        return testing_board
+
+    def updateBoard(self):
+        self.xo = self.getLatestBoard()
+
+        for x in range(9):
+            for y in range(9):
+                if self.xo[x][y] == 1:
+                    self.createText("X","freesansbold.ttf",50,(0,0,0),int(self.button[str(x)+" "+str(y)][0])+30,float(self.button[str(x)+" "+str(y)][1])+32.5)
+                elif self.xo[x][y] == 2:
+                    self.createText("O","freesansbold.ttf",50,(0,0,0),int(self.button[str(x)+" "+str(y)][0])+30,float(self.button[str(x)+" "+str(y)][1])+32.5)
+
+        pygame.display.update()
+
+    def popUpMsg(self,message):
+        print(message)
+
     def playListener(self, pawn):
         running = True
         while running:
+            self.updateBoard()
             for event in pygame.event.get():
                 if event.type==pygame.QUIT:
                     running = False
@@ -48,23 +80,27 @@ class TicTacToe:
                     for x in range(9):
                         for y in range(9):
                             if self.button[str(x)+" "+str(y)].collidepoint(pos):
-                                print(self.button[str(x)+" "+str(y)])
-                                if pawn == "X":
-                                    self.xo[x][y]=1
-                                    self.createText("X","freesansbold.ttf",50,(0,0,0),int(self.button[str(x)+" "+str(y)][0])+30,float(self.button[str(x)+" "+str(y)][1])+32.5)
-                                elif pawn == "O":
-                                    self.xo[x][y]=2
-                                    self.createText("O","freesansbold.ttf",50,(0,0,0),int(self.button[str(x)+" "+str(y)][0])+30,float(self.button[str(x)+" "+str(y)][1])+32.5)
+                                self.updateBoard()
+                                if self.xo[x][y] == None:
+                                    if pawn == 1:
+                                        self.xo[x][y]=1
+                                        self.createText("X","freesansbold.ttf",50,(0,0,0),int(self.button[str(x)+" "+str(y)][0])+30,float(self.button[str(x)+" "+str(y)][1])+32.5)
+                                    elif pawn == 2:
+                                        self.xo[x][y]=2
+                                        self.createText("O","freesansbold.ttf",50,(0,0,0),int(self.button[str(x)+" "+str(y)][0])+30,float(self.button[str(x)+" "+str(y)][1])+32.5)
+                                else:
+                                    self.popUpMsg("Already Filled")
                                 breakmaster=True
                                 break
                         if breakmaster==True:
                             break
             pygame.display.update()
 
+
 def main():
     myBoard = TicTacToe()
     myBoard.createBoard()
-    myBoard.playListener("O")
+    myBoard.playListener(1)
 
 if __name__ == '__main__':
     main()
