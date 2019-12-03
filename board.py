@@ -36,6 +36,11 @@ class TicTacToe:
         self.screen.blit(TextSurf,TextRect)
 
     def getLatestBoard(self):
+        '''
+        This is for testing purpose only.
+        The actual getLatestBoard will be pulling data from server using Pyro4,
+        then that data will be decode because probably we will use pickle as object serialization then return it.
+        '''
         testing_board=[[None for j in range(9)] for i in range(9)]
         testing_board[1][1] = 1
         testing_board[4][2] = 1
@@ -64,6 +69,9 @@ class TicTacToe:
         pygame.display.update()
 
     def popUpMsg(self,message):
+        '''
+        We can print the message to the board or pop-up windows but not a chance we will print it on just terminal.
+        '''
         print(message)
 
     def playListener(self, pawn):
