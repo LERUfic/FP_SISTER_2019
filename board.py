@@ -15,6 +15,7 @@ class TicTacToe:
         self.y0=100
 
     def createBoard(self):
+        self.createText("TicTacToe Gan","freesansbold.ttf",50,(0,0,0),640,50)
         for x in range(9):
             x1=self.x0
             for y in range(9):
@@ -43,14 +44,14 @@ class TicTacToe:
         largeText = pygame.font.Font(font, size)
         TextSurf, TextRect = self.text_objects(text,largeText,color)
         TextRect.center=x,y
-        while i<5:
+        while i<3:
             print(i)
             self.screen.blit(TextSurf,TextRect)
             time.sleep(1)
             i=i+1
             pygame.display.update()
         self.drawbox("",20,"freesansbold.ttf",(255,255,255),(800),(100),350,200,(0,0,0),(150,150,150))
-        
+
 
     def draw_button(self,text,text_size,font,font_color,x,y,width,height,color1,color2,action=None,arg=None):
         mouse = pygame.mouse.get_pos()
@@ -135,6 +136,7 @@ class TicTacToe:
                                     elif pawn == 2:
                                         self.xo[x][y]=2
                                         self.createText("O","freesansbold.ttf",50,(0,0,0),int(self.button[str(x)+" "+str(y)][0])+30,float(self.button[str(x)+" "+str(y)][1])+32.5)
+                                    self.drawbox("",20,"freesansbold.ttf",(255,255,255),(800),(100),350,200,(0,0,0),(150,150,150))
                                 else:
                                     temptext = threading.Thread(target=self.createTempText, args=(1,"Already Filled","freesansbold.ttf",50,(255,255,255),975,200))
                                     temptext.start()
