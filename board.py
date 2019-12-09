@@ -13,12 +13,17 @@ class TicTacToe:
         self.button=dict()
         self.x0=200
         self.y0=100
+        self.boardstatus=[0,0,0,0,0,0,0,0,0]
+        # koordinat board x1,x2,y1,y2 
+        self.board_loc=[[0,2,0,2],[3,5,0,2],[6,8,0,2],
+                        [0,2,3,5],[3,5,3,5],[6,8,3,5],
+                        [0,2,6,8],[3,5,6,8],[6,8,6,8]]
 
     def createBoard(self):
         self.createText("TicTacToe Gan","freesansbold.ttf",50,(0,0,0),640,50)
-        for x in range(9):
+        for y in range(9):
             x1=self.x0
-            for y in range(9):
+            for x in range(9):
                 loc=str(x)+','+str(y)
                 #(a,b)=x1 x2 y1 y2
                 coordinate=str(x1)+" "+str(x1+60)+" "+str(self.y0)+" "+str(self.y0+60) 
@@ -71,6 +76,12 @@ class TicTacToe:
         popupbox=pygame.draw.rect(self.screen, color1, (x,y,width,height))
         return popupbox
 
+    def update_board_status(self,x,y):
+        for i in range(len(self.board_loc)):
+            if x>=self.board_loc[i][0] and x<=self.board_loc[i][1] and y>=self.board_loc[i][2] and y<=self.board_loc[i][3]:
+                print(i)
+                self.boardstatus[i]=self.boardstatus[i]+1
+
     def getLatestBoard(self):
         '''
         This is for testing purpose only.
@@ -78,25 +89,25 @@ class TicTacToe:
         then that data will be decode because probably we will use pickle as object serialization then return it.
         '''
         testing_board=[[None for j in range(9)] for i in range(9)]
-        testing_board[1][1] = 1
-        testing_board[4][2] = 1
-        testing_board[6][3] = 1
-        testing_board[1][4] = 1
-        testing_board[2][8] = 1
+        testing_board[2][1] = 1
+        # testing_board[4][2] = 1
+        # testing_board[6][3] = 1
+        # testing_board[1][4] = 1
+        # testing_board[2][8] = 1
 
-        testing_board[8][5] = 2
-        testing_board[7][6] = 2
-        testing_board[1][7] = 2
-        testing_board[1][2] = 2
-        testing_board[4][3] = 2
+        # testing_board[8][5] = 2
+        # testing_board[7][6] = 2
+        # testing_board[1][7] = 2
+        # testing_board[1][2] = 2
+        # testing_board[4][3] = 2
 
         return testing_board
 
     def updateBoard(self):
-        self.xo = self.getLatestBoard()
+        # self.xo = self.getLatestBoard()
 
-        for x in range(9):
-            for y in range(9):
+        for y in range(9):
+            for x in range(9):
                 if self.xo[x][y] == 1:
                     self.createText("X","freesansbold.ttf",50,(0,0,0),int(self.button[str(x)+" "+str(y)][0])+30,float(self.button[str(x)+" "+str(y)][1])+32.5)
                 elif self.xo[x][y] == 2:
@@ -124,17 +135,21 @@ class TicTacToe:
                     pos = pygame.mouse.get_pos()
                     seek=True
                     breakmaster=False
-                    for x in range(9):
-                        for y in range(9):
+                    for y in range(9):
+                        for x in range(9):
                             if self.button[str(x)+" "+str(y)].collidepoint(pos):
                                 self.updateBoard()
                                 if self.xo[x][y] == None:
                                     if pawn == 1:
-                                        print(self.xo)
                                         self.xo[x][y]=1
+                                        print(self.xo)
+                                        print(str(x)+" "+str(y))
+                                        self.update_board_status(x,y)
+                                        print(self.boardstatus)
                                         self.createText("X","freesansbold.ttf",50,(0,0,0),int(self.button[str(x)+" "+str(y)][0])+30,float(self.button[str(x)+" "+str(y)][1])+32.5)
                                     elif pawn == 2:
                                         self.xo[x][y]=2
+                                        print(self.xo)
                                         self.createText("O","freesansbold.ttf",50,(0,0,0),int(self.button[str(x)+" "+str(y)][0])+30,float(self.button[str(x)+" "+str(y)][1])+32.5)
                                     self.drawbox("",20,"freesansbold.ttf",(255,255,255),(800),(100),350,200,(0,0,0),(150,150,150))
                                 else:
