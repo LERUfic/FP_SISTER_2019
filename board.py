@@ -28,7 +28,7 @@ class TicTacToe:
                         [0,2,3,5],[3,5,3,5],[6,8,3,5],
                         [0,2,6,8],[3,5,6,8],[6,8,6,8]]
         self.pawn = 0
-        self.board_id = 0
+        self.board_id = None
         self.current_board = None
         self.c = clientproxy()
         self.proxy = self.c.connect()
@@ -159,7 +159,7 @@ class TicTacToe:
         popuptext=None
         self.drawbox("",20,"freesansbold.ttf",(255,255,255),(800),(100),350,200,(0,0,0),(150,150,150))
         while running:
-            if self.current_board == None and self.board_id != None:
+            if self.current_board == None and self.board_id != -1:
                 self.current_board = singleboard.SingleBoard(self.board_id)
                 self.current_board.reJoin(self.pawn)
             self.updateBoard()
@@ -180,7 +180,7 @@ class TicTacToe:
                                     # 
                                     
                                     #Ini buat yang pertama kali join
-                                    if self.pawn == -1:
+                                    if self.pawn == 0:
                                         
                                         idboard=self.update_board_status(x,y)
                                         print(idboard)
@@ -194,8 +194,8 @@ class TicTacToe:
                                         saving_data.saveData()
 
                                     my_turn = self.current_board.isMyTurn(self.xo)
-                                    pieces = self.current_board.countPieces(self.xo)
-                                    print(pieces)
+                                    # pieces = self.current_board.countPieces(self.xo)
+                                    # print(pieces)
                                     # print(self.xo)
 
                                     if not my_turn:
