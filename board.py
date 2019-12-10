@@ -30,6 +30,8 @@ class TicTacToe:
         self.pawn = -1
         self.board_id = 0
         self.current_board = None
+        self.c = clientproxy()
+        self.proxy = self.c.connect()
 
     def createBoard(self):
         self.createText("TicTacToe Gan","freesansbold.ttf",50,(0,0,0),640,50)
@@ -104,9 +106,7 @@ class TicTacToe:
         # testing_board=[[None for j in range(9)] for i in range(9)]
 
 
-        c = clientproxy()
-        proxy = c.connect()
-        board = proxy.getboard()
+        board = self.proxy.getboard()
 
         # # testing_board[2][1] = 1
         # testing_board[4][2] = 1
@@ -157,8 +157,6 @@ class TicTacToe:
         popupbox=None
         popuptext=None
         self.drawbox("",20,"freesansbold.ttf",(255,255,255),(800),(100),350,200,(0,0,0),(150,150,150))
-        c = clientproxy()
-        proxy = c.connect()
         while running:
             self.updateBoard()
             for event in pygame.event.get():
@@ -202,19 +200,19 @@ class TicTacToe:
                                     # print(pieces)
                                     # print(self.xo)
 
-                                    if my_turn:
+                                    if not my_turn:
                                         print('Bukan giliranmu bro')
                                     else:
                                         if self.pawn == 1:
                                             self.xo[x][y]=1
                                             print(self.xo)
-                                            proxy.input(self.xo)
+                                            self.proxy.input(self.xo)
                                             # self.update_board_status(x,y)
                                             # self.createText("X","freesansbold.ttf",50,(0,0,0),int(self.button[str(x)+" "+str(y)][0])+30,float(self.button[str(x)+" "+str(y)][1])+32.5)
                                         elif self.pawn == 2:
                                             self.xo[x][y]=2
                                             print(self.xo)
-                                            proxy.input(self.xo)
+                                            self.proxy.input(self.xo)
                                             # print(self.xo)
                                             # self.createText("O","freesansbold.ttf",50,(0,0,0),int(self.button[str(x)+" "+str(y)][0])+30,float(self.button[str(x)+" "+str(y)][1])+32.5)
                                         self.drawbox("",20,"freesansbold.ttf",(255,255,255),(800),(100),350,200,(0,0,0),(150,150,150))

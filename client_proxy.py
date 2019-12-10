@@ -5,24 +5,24 @@ import random
 namainstance = sys.argv[1] or "clientproxy"
 
 class proxy(object):
+    def __init__(self):
+        self.f=fileserver()
+        self.server=self.f.connect()
+
     def coba(self):
         fileserver = Pyro()
         server = fileserver.fileserver()
         return server.coba2()
 
     def getboard(self):
-        f=fileserver()
-        server=f.connect()
-        return server.getserver_board()
+        return self.server.getserver_board()
 
     def update(self):
         p = Pyro()
         return p.updateserver()
 
     def input(self, board):
-        f=fileserver()
-        server=f.connect()
-        return server.inputboard(board)
+        return self.server.inputboard(board)
 
 class fileserver:
     def connect(self):

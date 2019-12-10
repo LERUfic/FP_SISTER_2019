@@ -7,17 +7,18 @@ class SingleBoard:
         self.id = board_id
 
     def isMyTurn(self,all_board):
-        self.getPieces(all_board)
-        if (self.pieces % 2) == 0:
-            if self.player1 == True:
-                return True
-            else:
-                return False
-        else:
-            if self.player1 == True:
-                return False
-            else:
-                return True
+        # self.getPieces(all_board)
+        # if (self.pieces % 2) == 0:
+        #     if self.player1 == True:
+        #         return True
+        #     else:
+        #         return False
+        # else:
+        #     if self.player1 == True:
+        #         return False
+        #     else:
+        #         return True
+        return True
 
     def joinGame(self,all_board):
         self.getPieces(all_board)
