@@ -6,16 +6,11 @@ import singleboard
 import player
 pygame.init()
 
-class Pyro:
-    def update():
+class clientproxy:
+    def connect(self):
         uri = "PYRONAME:clientproxy@localhost:7777"
         gserver = Pyro4.Proxy(uri)
-        return gserver.update()
-    
-    def input(posisi):
-        uri = "PYRONAME:clientproxy@localhost:7777"
-        gserver = Pyro4.Proxy(uri)
-        return gserver.input(posisi)
+        return gserver
 
 class TicTacToe:
     def __init__(self):
@@ -98,6 +93,7 @@ class TicTacToe:
             if x>=self.board_loc[i][0] and x<=self.board_loc[i][1] and y>=self.board_loc[i][2] and y<=self.board_loc[i][3]:
                 # print(i)
                 self.boardstatus[i]=self.boardstatus[i]+1
+                return i
 
     def getLatestBoard(self):
         '''
@@ -105,23 +101,30 @@ class TicTacToe:
         The actual getLatestBoard will be pulling data from server using Pyro4,
         then that data will be decode because probably we will use pickle as object serialization then return it.
         '''
-        testing_board=[[None for j in range(9)] for i in range(9)]
-        # testing_board[2][1] = 1
-        testing_board[4][2] = 1
-        testing_board[6][3] = 1
-        testing_board[1][4] = 1
-        testing_board[2][8] = 1
+        # testing_board=[[None for j in range(9)] for i in range(9)]
 
-        testing_board[8][5] = 2
-        testing_board[7][6] = 2
-        testing_board[1][7] = 2
-        # testing_board[1][2] = 2
-        testing_board[4][3] = 2
 
-        return testing_board
+        c = clientproxy()
+        proxy = c.connect()
+        board = proxy.getboard()
+
+        # # testing_board[2][1] = 1
+        # testing_board[4][2] = 1
+        # testing_board[6][3] = 1
+        # testing_board[1][4] = 1
+        # testing_board[2][8] = 1
+
+        # testing_board[8][5] = 2
+        # testing_board[7][6] = 2
+        # testing_board[1][7] = 2
+        # # testing_board[1][2] = 2
+        # testing_board[4][3] = 2   
+
+
+        return board
 
     def updateBoard(self):
-        # self.xo = self.getLatestBoard()
+        self.xo = self.getLatestBoard()
 
         for y in range(9):
             for x in range(9):
@@ -154,6 +157,8 @@ class TicTacToe:
         popupbox=None
         popuptext=None
         self.drawbox("",20,"freesansbold.ttf",(255,255,255),(800),(100),350,200,(0,0,0),(150,150,150))
+        c = clientproxy()
+        proxy = c.connect()
         while running:
             self.updateBoard()
             for event in pygame.event.get():
@@ -174,7 +179,9 @@ class TicTacToe:
                                     
                                     #Ini buat yang pertama kali join
                                     if self.pawn == -1:
-                                        idboard = 0
+                                        
+                                        idboard=self.update_board_status(x,y)
+                                        print(idboard)
                                         self.current_board = singleboard.SingleBoard(idboard)
                                         self.pawn = self.current_board.joinGame(self.xo)
                                         self.board_id = idboard
@@ -195,21 +202,21 @@ class TicTacToe:
                                     # print(pieces)
                                     # print(self.xo)
 
-                                    if not my_turn:
+                                    if my_turn:
                                         print('Bukan giliranmu bro')
                                     else:
                                         if self.pawn == 1:
                                             self.xo[x][y]=1
-                                            # print(self.xo)
-                                            # print(str(x)+" "+str(y))
-                                            # print(str(x)+" "+str(y))
-                                            self.update_board_status(x,y)
-                                            # print(self.boardstatus)
-                                            self.createText("X","freesansbold.ttf",50,(0,0,0),int(self.button[str(x)+" "+str(y)][0])+30,float(self.button[str(x)+" "+str(y)][1])+32.5)
+                                            print(self.xo)
+                                            proxy.input(self.xo)
+                                            # self.update_board_status(x,y)
+                                            # self.createText("X","freesansbold.ttf",50,(0,0,0),int(self.button[str(x)+" "+str(y)][0])+30,float(self.button[str(x)+" "+str(y)][1])+32.5)
                                         elif self.pawn == 2:
                                             self.xo[x][y]=2
+                                            print(self.xo)
+                                            proxy.input(self.xo)
                                             # print(self.xo)
-                                            self.createText("O","freesansbold.ttf",50,(0,0,0),int(self.button[str(x)+" "+str(y)][0])+30,float(self.button[str(x)+" "+str(y)][1])+32.5)
+                                            # self.createText("O","freesansbold.ttf",50,(0,0,0),int(self.button[str(x)+" "+str(y)][0])+30,float(self.button[str(x)+" "+str(y)][1])+32.5)
                                         self.drawbox("",20,"freesansbold.ttf",(255,255,255),(800),(100),350,200,(0,0,0),(150,150,150))
                                 else:
                                     temptext = threading.Thread(target=self.createTempText, args=(1,"Already Filled","freesansbold.ttf",50,(255,255,255),975,200))

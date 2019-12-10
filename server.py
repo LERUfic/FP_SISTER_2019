@@ -4,22 +4,24 @@ import random
 
 namainstance = sys.argv[1] or "fileserver"
 
-board = [[None for j in range(9)] for i in range(9)]
 
 class FileServer(object):
     def __init__(self):
-        pass
+        self.board = [[None for j in range(9)] for i in range(9)]
 
-    def get_greet(self, name='NoName'):
-        lucky_number = random.randint(1, 100000)
-        return "Hello {}, this is your lucky number {}".format(name, lucky_number)
+    def coba2(self):
+        return "bisa fileserver"
 
-    def updateserver(self):
-        return board
+    def getserver_board(self):
+        # self.board[8][5] = 2
+        # self.board[7][6] = 2
+        # self.board[1][7] = 2
+        return self.board
 
-    def inputserver(self, posisi=None):
-        board = posisi
-        return "tunggu pemain lawan"
+
+    def inputboard(self, newboard):
+        self.board = newboard
+        return "updated"
 
 def start_with_ns():
     #name server harus di start dulu dengan  pyro4-ns -n localhost -p 7777
@@ -43,7 +45,7 @@ def replica():
     return fserver
 
 if __name__ == '__main__':
-    rm = replica()
-    rm.add_server(sys.argv[1])
-    print(rm.get_serverlist())
+    # rm = replica()
+    # rm.add_server(sys.argv[1])
+    # print(rm.get_serverlist())
     start_with_ns()

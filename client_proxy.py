@@ -5,32 +5,30 @@ import random
 namainstance = sys.argv[1] or "clientproxy"
 
 class proxy(object):
-    def __init__(self):
-        pass
+    def coba(self):
+        fileserver = Pyro()
+        server = fileserver.fileserver()
+        return server.coba2()
 
-    def get_greet(self, name='NoName'):
-        lucky_number = random.randint(1, 100000)
-        return "Hello {}, this is your lucky number {}".format(name, lucky_number)
+    def getboard(self):
+        f=fileserver()
+        server=f.connect()
+        return server.getserver_board()
 
     def update(self):
         p = Pyro()
         return p.updateserver()
 
-    def input(self, posisi=None):
-        p = Pyro()
-        p.inputserver(posisi)
-        return "tunggu pemain lawan"
+    def input(self, board):
+        f=fileserver()
+        server=f.connect()
+        return server.inputboard(board)
 
-class Pyro:
-    def updateserver():
+class fileserver:
+    def connect(self):
         uri = "PYRONAME:fileserver@localhost:7777"
         gserver = Pyro4.Proxy(uri)
-        return gserver.update()
-    
-    def inputserver(posisi):
-        uri = "PYRONAME:fileserver@localhost:7777"
-        gserver = Pyro4.Proxy(uri)
-        return gserver.input(posisi)
+        return gserver
 
 def start_with_ns():
     #name server harus di start dulu dengan  pyro4-ns -n localhost -p 7777
