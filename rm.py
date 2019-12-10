@@ -25,8 +25,11 @@ class FileServer(object):
             # print(str(server))
             if str(server) != str(from_server):
                 # print(str(server))
-                fserver = self.another_server(server)
-                fserver.inputboard(board,boardplayer,0)
+                try:
+                    fserver = self.another_server(server)
+                    fserver.inputboard(board,boardplayer,0)
+                except Exception as e:
+                    pass
         return "ok"
 
 

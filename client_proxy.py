@@ -39,7 +39,7 @@ class proxy(object):
 
     def getStatus(self):
         return konek
-        
+
     def input(self, board,boardplayer):
         while True:
             try:
@@ -54,8 +54,8 @@ def start_with_ns():
     #gunakan URI untuk referensi name server yang akan digunakan
     #untuk mengetahui instance apa saja yang aktif gunakan pyro4-nsc -n localhost -p 7777 list
 
-    daemon = Pyro4.Daemon(host="10.151.36.29")
-    ns = Pyro4.locateNS("10.151.36.29",7777)
+    daemon = Pyro4.Daemon(host="localhost")
+    ns = Pyro4.locateNS("localhost",7777)
     x_FileServer = Pyro4.expose(proxy)
     uri_fileserver = daemon.register(x_FileServer)
     ns.register("{}" . format(namainstance), uri_fileserver)
