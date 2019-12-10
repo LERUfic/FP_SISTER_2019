@@ -10,6 +10,7 @@ namainstance = "clientproxy"
 list_fserver = ['fileserver1','fileserver2','fileserver3']
 uri_now = ''
 server = ''
+konek = 0
 
 class proxy(object):
     # def __init__(self):
@@ -17,6 +18,9 @@ class proxy(object):
     #     server=self.f.connect()
 
     def getboard(self):
+        while True:
+            if konek == 1:
+                break
         return server.getserver_board()
 
     # def update(self):
@@ -24,6 +28,9 @@ class proxy(object):
     #     return p.updateserver()
 
     def input(self, board):
+        while True:
+            if konek == 1:
+                break
         return server.inputboard(board)
 
 def start_with_ns():
@@ -43,6 +50,7 @@ def start_with_ns():
 
 def connect():
     global uri_now
+    global konek
     while True:
         print("trying to connect server...")
         uri = fserver_availibility()
@@ -50,18 +58,21 @@ def connect():
             gserver = Pyro4.Proxy(uri)
             uri_now = uri
             print("connected!")
+            konek = 1
             return gserver
         time.sleep(1)
 
 def ping_ack(a):
     global uri_now
     global server
+    global konek
     while True:
         with Pyro4.Proxy(uri_now) as p:
             try:
                 p._pyroBind()
             except (Pyro4.naming.NamingError,Pyro4.errors.CommunicationError) as e:
                 print("server disconected!")
+                konek = 0
                 server=connect()
 
 def fserver_availibility():
