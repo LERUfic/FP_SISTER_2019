@@ -8,7 +8,7 @@ pygame.init()
 
 class clientproxy:
     def connect(self):
-        uri = "PYRONAME:clientproxy@localhost:7777"
+        uri = "PYRONAME:clientproxy@10.151.36.29:7777"
         gserver = Pyro4.Proxy(uri)
         return gserver
 
@@ -36,6 +36,7 @@ class TicTacToe:
                             [None,None,None],[None,None,None],[None,None,None],
                             [None,None,None],[None,None,None],[None,None,None]]
         self.myplayerid = None
+        self.selamat=0
 
     def createBoard(self):
         self.createText("TicTacToe Gan","freesansbold.ttf",50,(0,0,0),640,50)
@@ -159,6 +160,17 @@ class TicTacToe:
             pemenang = self.current_board.checkWinner(self.xo)
             if pemenang != None:
                 # POP UP PEMENANG
+                if self.board_id!=-1:
+                    if pemenang==3:
+                        text="A Board "+str(self.board_id)+" is Over"
+                        self.createText(text,"freesansbold.ttf",30,(255,255,255),975,200)
+                        text2="Match Draw!"
+                        self.createText(text2,"freesansbold.ttf",30,(255,255,255),975,250)
+                    else:
+                        text="A Board "+str(self.board_id)+" is Over"
+                        self.createText(text,"freesansbold.ttf",30,(255,255,255),975,200)
+                        text2="Player "+str(pemenang)+" is a Winner"
+                        self.createText(text2,"freesansbold.ttf",30,(255,255,255),975,250)
                 print(pemenang)
                 saving_data = player.Player()
                 saving_data.resetData()
@@ -210,6 +222,7 @@ class TicTacToe:
                                     idboard=self.update_board_status(x,y)
                                     if self.pawn == 0:
                                         # print(idboard)
+                                        self.selamat=0
                                         self.current_board = singleboard.SingleBoard(idboard)
                                         self.pawn = self.current_board.joinGame(self.xo)
                                         self.board_id = idboard
@@ -225,6 +238,8 @@ class TicTacToe:
                                     # print(self.xo)
 
                                     if not my_turn:
+                                        temptext3 = threading.Thread(target=self.createTempText, args=(1,"Not Your Turn","freesansbold.ttf",20,(255,255,255),975,200))
+                                        temptext3.start()
                                         print('Bukan giliranmu bro')
                                     else:
                                         if self.current_board.getMyBoardID() == idboard:
@@ -244,10 +259,14 @@ class TicTacToe:
                                                 # self.createText("O","freesansbold.ttf",50,(0,0,0),int(self.button[str(x)+" "+str(y)][0])+30,float(self.button[str(x)+" "+str(y)][1])+32.5)
                                             self.drawbox("",20,"freesansbold.ttf",(255,255,255),(800),(100),350,200,(0,0,0),(150,150,150))
                                         else:
+                                            temptext2 = threading.Thread(target=self.createTempText, args=(1,"You Are Currently Playing","freesansbold.ttf",20,(255,255,255),975,200))
+                                            temptext2.start()
                                             print("Jangan Klik Board Lain Bro")
                                 else:
                                     temptext = threading.Thread(target=self.createTempText, args=(1,"Already Filled","freesansbold.ttf",50,(255,255,255),975,200))
                                     temptext.start()
+
+                                    
                                     # self.createText("Already Filled","freesansbold.ttf",50,(255,255,255),975,200)
                                     # self.popUpMsg("Already Filled")
                                 breakmaster=True

@@ -69,6 +69,10 @@ class SingleBoard:
         if self.board[2] == self.board[4] and self.board[4] == self.board[6] and self.board[2] != None:
             pemenang = self.board[2]
 
+        #check draw
+        if self.pieces==9 and pemenang==None:
+            return 3
+
         return pemenang
 
     def extractBoard(self,all_board):
