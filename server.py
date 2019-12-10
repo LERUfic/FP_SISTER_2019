@@ -10,6 +10,8 @@ namainstance = sys.argv[1] or "fileserver"
 class FileServer(object):
     def __init__(self):
         self.board = [[None for j in range(9)] for i in range(9)]
+        self.f=replication()
+        self.replica=self.f.connect()
 
     def coba2(self):
         return "bisa fileserver"
@@ -34,6 +36,8 @@ class FileServer(object):
         self.board = newboard
         with open('board_data.db','wb') as f:
             pickle.dump(self.board,f, pickle.HIGHEST_PROTOCOL)
+        print(namainstance)
+        self.replica.consistency(namainstance,self.board)
 
 def start_with_ns():
     #name server harus di start dulu dengan  pyro4-ns -n localhost -p 7777
@@ -50,14 +54,16 @@ def start_with_ns():
     #ns.register("fileserver3", uri_fileserver)
     daemon.requestLoop()
 
+class replication:
+    def connect(self):
+        uri = "PYRONAME:rm@localhost:7777"
+        fserver = Pyro4.Proxy(uri)
+        return fserver
 
-def replica():
-    uri = "PYRONAME:rm@localhost:7777"
-    fserver = Pyro4.Proxy(uri)
-    return fserver
 
 if __name__ == '__main__':
-    # rm = replica()
-    # rm.add_server(sys.argv[1])
-    # print(rm.get_serverlist())
+    rm = replication()
+    replica = rm.connect()
+    replica.add_server(namainstance)
+    print(replica.get_serverlist())
     start_with_ns()
