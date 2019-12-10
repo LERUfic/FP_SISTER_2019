@@ -8,7 +8,7 @@ pygame.init()
 
 class clientproxy:
     def connect(self):
-        uri = "PYRONAME:clientproxy@10.151.36.29:7777"
+        uri = "PYRONAME:clientproxy@localhost:7777"
         gserver = Pyro4.Proxy(uri)
         return gserver
 
