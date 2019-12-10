@@ -2,18 +2,20 @@ import Pyro4
 import pygame
 import threading
 import time
+import singleboard
+import player
 pygame.init()
 
 class Pyro:
     def update():
-	    uri = "PYRONAME:clientproxy@localhost:7777"
-	    gserver = Pyro4.Proxy(uri)
-	    return gserver.update()
-	
-	def input(posisi):
-	    uri = "PYRONAME:clientproxy@localhost:7777"
-	    gserver = Pyro4.Proxy(uri)
-	    return gserver.input(posisi)
+        uri = "PYRONAME:clientproxy@localhost:7777"
+        gserver = Pyro4.Proxy(uri)
+        return gserver.update()
+    
+    def input(posisi):
+        uri = "PYRONAME:clientproxy@localhost:7777"
+        gserver = Pyro4.Proxy(uri)
+        return gserver.input(posisi)
 
 class TicTacToe:
     def __init__(self):
@@ -30,6 +32,9 @@ class TicTacToe:
         self.board_loc=[[0,2,0,2],[3,5,0,2],[6,8,0,2],
                         [0,2,3,5],[3,5,3,5],[6,8,3,5],
                         [0,2,6,8],[3,5,6,8],[6,8,6,8]]
+        self.pawn = -1
+        self.board_id = 0
+        self.current_board = None
 
     def createBoard(self):
         self.createText("TicTacToe Gan","freesansbold.ttf",50,(0,0,0),640,50)
@@ -62,7 +67,7 @@ class TicTacToe:
         TextSurf, TextRect = self.text_objects(text,largeText,color)
         TextRect.center=x,y
         while i<3:
-            print(i)
+            # print(i)
             self.screen.blit(TextSurf,TextRect)
             time.sleep(1)
             i=i+1
@@ -91,7 +96,7 @@ class TicTacToe:
     def update_board_status(self,x,y):
         for i in range(len(self.board_loc)):
             if x>=self.board_loc[i][0] and x<=self.board_loc[i][1] and y>=self.board_loc[i][2] and y<=self.board_loc[i][3]:
-                print(i)
+                # print(i)
                 self.boardstatus[i]=self.boardstatus[i]+1
 
     def getLatestBoard(self):
@@ -101,17 +106,19 @@ class TicTacToe:
         then that data will be decode because probably we will use pickle as object serialization then return it.
         '''
         testing_board=[[None for j in range(9)] for i in range(9)]
-        testing_board[2][1] = 1
-        # testing_board[4][2] = 1
-        # testing_board[6][3] = 1
-        # testing_board[1][4] = 1
-        # testing_board[2][8] = 1
+        # testing_board[2][1] = 1
+        testing_board[4][2] = 1
+        testing_board[6][3] = 1
+        testing_board[1][4] = 1
+        testing_board[2][8] = 1
 
-        # testing_board[8][5] = 2
-        # testing_board[7][6] = 2
-        # testing_board[1][7] = 2
+        testing_board[8][5] = 2
+        testing_board[7][6] = 2
+        testing_board[1][7] = 2
         # testing_board[1][2] = 2
-        # testing_board[4][3] = 2
+        testing_board[4][3] = 2
+
+        return testing_board
 
     def updateBoard(self):
         # self.xo = self.getLatestBoard()
@@ -124,14 +131,25 @@ class TicTacToe:
                     self.createText("O","freesansbold.ttf",50,(0,0,0),int(self.button[str(x)+" "+str(y)][0])+30,float(self.button[str(x)+" "+str(y)][1])+32.5)
 
         pygame.display.update()
+        
+        if self.current_board != None:
+            pemenang = self.current_board.checkWinner(self.xo)
+            if pemenang != None:
+                # POP UP PEMENANG
+                saving_data = player.Player()
+                saving_data.resetData()
 
     def popUpMsg(self,message):
         '''
         We can print the message to the board or pop-up windows but not a chance we will print it on just terminal.
         '''
-        print(message)
+        # print(message)
 
-    def playListener(self, pawn):
+    def setFromLoad(self,boid,prev_pawn):
+        self.board_id = boid
+        self.pawn = prev_pawn
+
+    def playListener(self):
         running = True
         popupbox=None
         popuptext=None
@@ -150,18 +168,49 @@ class TicTacToe:
                             if self.button[str(x)+" "+str(y)].collidepoint(pos):
                                 self.updateBoard()
                                 if self.xo[x][y] == None:
-                                    if pawn == 1:
-                                        self.xo[x][y]=1
-                                        print(self.xo)
-                                        print(str(x)+" "+str(y))
-                                        self.update_board_status(x,y)
-                                        print(self.boardstatus)
-                                        self.createText("X","freesansbold.ttf",50,(0,0,0),int(self.button[str(x)+" "+str(y)][0])+30,float(self.button[str(x)+" "+str(y)][1])+32.5)
-                                    elif pawn == 2:
-                                        self.xo[x][y]=2
-                                        print(self.xo)
-                                        self.createText("O","freesansbold.ttf",50,(0,0,0),int(self.button[str(x)+" "+str(y)][0])+30,float(self.button[str(x)+" "+str(y)][1])+32.5)
-                                    self.drawbox("",20,"freesansbold.ttf",(255,255,255),(800),(100),350,200,(0,0,0),(150,150,150))
+                                    # nanti disini get ID boardnya idboard = self.boardstatus
+                                    # ======================================================
+                                    # 
+                                    
+                                    #Ini buat yang pertama kali join
+                                    if self.pawn == -1:
+                                        idboard = 0
+                                        self.current_board = singleboard.SingleBoard(idboard)
+                                        self.pawn = self.current_board.joinGame(self.xo)
+                                        self.board_id = idboard
+                                        saving_data = player.Player()
+                                        saving_data.setGameStatus('1')
+                                        saving_data.setBoardID(str(self.board_id))
+                                        saving_data.setPawn(str(self.pawn))
+                                        saving_data.saveData()
+
+                                    #ini buat yang sudah join atau diskonek
+                                    else:
+                                        #buat yang diskonek
+                                        if self.current_board == None:
+                                            self.current_board = singleboard.SingleBoard(self.board_id)
+
+                                    my_turn = self.current_board.isMyTurn(self.xo)
+                                    pieces = self.current_board.countBoard(self.xo)
+                                    print(pieces)
+                                    print(self.xo)
+
+                                    if not my_turn:
+                                        print('Bukan giliranmu bro')
+                                    else:
+                                        if self.pawn == 1:
+                                            self.xo[x][y]=1
+                                            # print(self.xo)
+                                            # print(str(x)+" "+str(y))
+                                            # print(str(x)+" "+str(y))
+                                            self.update_board_status(x,y)
+                                            # print(self.boardstatus)
+                                            self.createText("X","freesansbold.ttf",50,(0,0,0),int(self.button[str(x)+" "+str(y)][0])+30,float(self.button[str(x)+" "+str(y)][1])+32.5)
+                                        elif self.pawn == 2:
+                                            self.xo[x][y]=2
+                                            # print(self.xo)
+                                            self.createText("O","freesansbold.ttf",50,(0,0,0),int(self.button[str(x)+" "+str(y)][0])+30,float(self.button[str(x)+" "+str(y)][1])+32.5)
+                                        self.drawbox("",20,"freesansbold.ttf",(255,255,255),(800),(100),350,200,(0,0,0),(150,150,150))
                                 else:
                                     temptext = threading.Thread(target=self.createTempText, args=(1,"Already Filled","freesansbold.ttf",50,(255,255,255),975,200))
                                     temptext.start()
@@ -175,9 +224,21 @@ class TicTacToe:
 
 
 def main():
+    _player = player.Player()
     myBoard = TicTacToe()
+
+    #Load Previous Data
+    _player.loadData()
+    is_played = _player.getGameStatus()
+    if is_played == '1':
+        temp_boid = int(_player.getBoardID())
+        temp_pawn = int(_player.getPawn())
+
+        myBoard.setFromLoad(temp_boid,temp_pawn)
+
+    #Game Logic
     myBoard.createBoard()
-    myBoard.playListener(1)
+    myBoard.playListener()
 
 if __name__ == '__main__':
     main()
