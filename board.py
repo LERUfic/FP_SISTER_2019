@@ -8,7 +8,7 @@ pygame.init()
 
 class clientproxy:
     def connect(self):
-        uri = "PYRONAME:clientproxy@localhost:7777"
+        uri = "PYRONAME:clientproxy@10.151.36.29:7777"
         gserver = Pyro4.Proxy(uri)
         return gserver
 
@@ -32,6 +32,10 @@ class TicTacToe:
         self.current_board = None
         self.c = clientproxy()
         self.proxy = self.c.connect()
+        self.boardplayer = [[None,None],[None,None],[None,None],
+                            [None,None],[None,None],[None,None],
+                            [None,None],[None,None],[None,None]]
+        self.myplayerid = None
 
     def createBoard(self):
         self.createText("TicTacToe Gan","freesansbold.ttf",50,(0,0,0),640,50)
@@ -45,7 +49,8 @@ class TicTacToe:
                 self.button[str(x)+' '+str(y)]=pygame.draw.rect(self.screen, (176, 175, 178),(x1,self.y0,60,60))
                 x1=x1+65
             self.y0=self.y0+65
-        pygame.display.update()
+        self.y0=100
+        # pygame.display.update()
 
     def text_objects(self, text,font,color):
         textSurface = font.render(text,True,color)
@@ -123,8 +128,23 @@ class TicTacToe:
 
         return board
 
+    def getLatestBoardPlayer(self):
+        boardplayer = self.proxy.getboardplayer()
+        return boardplayer
+
     def updateBoard(self):
         self.xo = self.getLatestBoard()
+        self.boardplayer = self.getLatestBoardPlayer()
+
+        if self.boardplayer[self.board_id][self.pawn] != self.myplayerid:
+            saving_data = player.Player()
+            saving_data.resetData()
+            saving_data.loadData()
+            temp_boid = int(saving_data.getBoardID())
+            temp_pawn = int(saving_data.getPawn())
+            self.setFromLoad(temp_boid,temp_pawn)
+
+        self.createBoard()
 
         for y in range(9):
             for x in range(9):
@@ -156,6 +176,9 @@ class TicTacToe:
     def setFromLoad(self,boid,prev_pawn):
         self.board_id = boid
         self.pawn = prev_pawn
+
+    def setPlayerID(self,playerid):
+        self.myplayerid=playerid
 
     def playListener(self):
         running = True
@@ -208,13 +231,15 @@ class TicTacToe:
                                             if self.pawn == 1:
                                                 self.xo[x][y]=1
                                                 print(self.xo)
-                                                self.proxy.input(self.xo)
+                                                self.boardplayer[self.board_id][self.pawn]=self.myplayerid
+                                                self.proxy.input(self.xo,self.boardplayer)
                                                 # self.update_board_status(x,y)
                                                 # self.createText("X","freesansbold.ttf",50,(0,0,0),int(self.button[str(x)+" "+str(y)][0])+30,float(self.button[str(x)+" "+str(y)][1])+32.5)
                                             elif self.pawn == 2:
                                                 self.xo[x][y]=2
                                                 print(self.xo)
-                                                self.proxy.input(self.xo)
+                                                self.boardplayer[self.board_id][self.pawn]=self.myplayerid
+                                                self.proxy.input(self.xo,self.boardplayer)
                                                 # print(self.xo)
                                                 # self.createText("O","freesansbold.ttf",50,(0,0,0),int(self.button[str(x)+" "+str(y)][0])+30,float(self.button[str(x)+" "+str(y)][1])+32.5)
                                             self.drawbox("",20,"freesansbold.ttf",(255,255,255),(800),(100),350,200,(0,0,0),(150,150,150))
@@ -239,6 +264,7 @@ def main():
     #Load Previous Data
     _player.loadData()
     is_played = _player.getGameStatus()
+    myBoard.setPlayerID(_player.getPlayerID())
     if is_played == '1':
         temp_boid = int(_player.getBoardID())
         temp_pawn = int(_player.getPawn())
