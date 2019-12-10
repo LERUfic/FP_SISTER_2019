@@ -24,8 +24,12 @@ class SingleBoard:
         self.getPieces(all_board)
         if self.pieces == 0:
             self.player1 = True
+            return 1
         elif self.pieces == 1:
             self.player2 = True
+            return 2
+        else:
+            return 0
 
     def reJoin(self,pawn):
         if pawn == 1:
@@ -35,7 +39,7 @@ class SingleBoard:
             self.player2 = True
             return 2
         else:
-            return -1
+            return 0
 
 
     def checkWinner(self,all_board):

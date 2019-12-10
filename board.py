@@ -27,7 +27,7 @@ class TicTacToe:
         self.board_loc=[[0,2,0,2],[3,5,0,2],[6,8,0,2],
                         [0,2,3,5],[3,5,3,5],[6,8,3,5],
                         [0,2,6,8],[3,5,6,8],[6,8,6,8]]
-        self.pawn = -1
+        self.pawn = 0
         self.board_id = 0
         self.current_board = None
         self.c = clientproxy()
