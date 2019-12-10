@@ -12,19 +12,19 @@ uri_now = ''
 server = ''
 
 class proxy(object):
-    def __init__(self):
-        self.f=fileserver()
-        self.server=self.f.connect()
+    # def __init__(self):
+    #     self.f=fileserver()
+    #     server=self.f.connect()
 
     def getboard(self):
-        return self.server.getserver_board()
+        return server.getserver_board()
 
-    def update(self):
-        p = Pyro()
-        return p.updateserver()
+    # def update(self):
+    #     p = Pyro()
+    #     return p.updateserver()
 
     def input(self, board):
-        return self.server.inputboard(board)
+        return server.inputboard(board)
 
 def start_with_ns():
     #name server harus di start dulu dengan  pyro4-ns -n localhost -p 7777
