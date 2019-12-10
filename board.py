@@ -1,5 +1,17 @@
+import Pyro4
 import pygame
 pygame.init()
+
+class Pyro:
+    def update():
+	    uri = "PYRONAME:clientproxy@localhost:7777"
+	    gserver = Pyro4.Proxy(uri)
+	    return gserver.update()
+	
+	def input(posisi):
+	    uri = "PYRONAME:clientproxy@localhost:7777"
+	    gserver = Pyro4.Proxy(uri)
+	    return gserver.input(posisi)
 
 class TicTacToe:
     def __init__(self):
@@ -41,20 +53,21 @@ class TicTacToe:
         The actual getLatestBoard will be pulling data from server using Pyro4,
         then that data will be decode because probably we will use pickle as object serialization then return it.
         '''
-        testing_board=[[None for j in range(9)] for i in range(9)]
-        testing_board[1][1] = 1
-        testing_board[4][2] = 1
-        testing_board[6][3] = 1
-        testing_board[1][4] = 1
-        testing_board[2][8] = 1
+        # testing_board=[[None for j in range(9)] for i in range(9)]
+        # testing_board[1][1] = 1
+        # testing_board[4][2] = 1
+        # testing_board[6][3] = 1
+        # testing_board[1][4] = 1
+        # testing_board[2][8] = 1
 
-        testing_board[8][5] = 2
-        testing_board[7][6] = 2
-        testing_board[1][7] = 2
-        testing_board[1][2] = 2
-        testing_board[4][3] = 2
-
-        return testing_board
+        # testing_board[8][5] = 2
+        # testing_board[7][6] = 2
+        # testing_board[1][7] = 2
+        # testing_board[1][2] = 2
+        # testing_board[4][3] = 2
+        server = Pyro()
+        return server.update()
+         
 
     def updateBoard(self):
         self.xo = self.getLatestBoard()
@@ -76,6 +89,7 @@ class TicTacToe:
 
     def playListener(self, pawn):
         running = True
+        server = Pyro()
         while running:
             self.updateBoard()
             for event in pygame.event.get():
@@ -92,9 +106,11 @@ class TicTacToe:
                                 if self.xo[x][y] == None:
                                     if pawn == 1:
                                         self.xo[x][y]=1
+                                        server.input(xo)
                                         self.createText("X","freesansbold.ttf",50,(0,0,0),int(self.button[str(x)+" "+str(y)][0])+30,float(self.button[str(x)+" "+str(y)][1])+32.5)
                                     elif pawn == 2:
                                         self.xo[x][y]=2
+                                        server.input(xo)
                                         self.createText("O","freesansbold.ttf",50,(0,0,0),int(self.button[str(x)+" "+str(y)][0])+30,float(self.button[str(x)+" "+str(y)][1])+32.5)
                                 else:
                                     self.popUpMsg("Already Filled")
