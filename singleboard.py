@@ -109,3 +109,6 @@ class SingleBoard:
         self.getPieces(all_board)
         return self.board
         return self.pieces
+    
+    def getMyBoardID(self):
+        return self.id

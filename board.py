@@ -142,6 +142,10 @@ class TicTacToe:
                 print(pemenang)
                 saving_data = player.Player()
                 saving_data.resetData()
+                saving_data.loadData()
+                temp_boid = int(saving_data.getBoardID())
+                temp_pawn = int(saving_data.getPawn())
+                self.setFromLoad(temp_boid,temp_pawn)
 
     def popUpMsg(self,message):
         '''
@@ -180,10 +184,9 @@ class TicTacToe:
                                     # 
                                     
                                     #Ini buat yang pertama kali join
+                                    idboard=self.update_board_status(x,y)
                                     if self.pawn == 0:
-                                        
-                                        idboard=self.update_board_status(x,y)
-                                        print(idboard)
+                                        # print(idboard)
                                         self.current_board = singleboard.SingleBoard(idboard)
                                         self.pawn = self.current_board.joinGame(self.xo)
                                         self.board_id = idboard
@@ -201,19 +204,22 @@ class TicTacToe:
                                     if not my_turn:
                                         print('Bukan giliranmu bro')
                                     else:
-                                        if self.pawn == 1:
-                                            self.xo[x][y]=1
-                                            print(self.xo)
-                                            self.proxy.input(self.xo)
-                                            # self.update_board_status(x,y)
-                                            # self.createText("X","freesansbold.ttf",50,(0,0,0),int(self.button[str(x)+" "+str(y)][0])+30,float(self.button[str(x)+" "+str(y)][1])+32.5)
-                                        elif self.pawn == 2:
-                                            self.xo[x][y]=2
-                                            print(self.xo)
-                                            self.proxy.input(self.xo)
-                                            # print(self.xo)
-                                            # self.createText("O","freesansbold.ttf",50,(0,0,0),int(self.button[str(x)+" "+str(y)][0])+30,float(self.button[str(x)+" "+str(y)][1])+32.5)
-                                        self.drawbox("",20,"freesansbold.ttf",(255,255,255),(800),(100),350,200,(0,0,0),(150,150,150))
+                                        if self.current_board.getMyBoardID() == idboard:
+                                            if self.pawn == 1:
+                                                self.xo[x][y]=1
+                                                print(self.xo)
+                                                self.proxy.input(self.xo)
+                                                # self.update_board_status(x,y)
+                                                # self.createText("X","freesansbold.ttf",50,(0,0,0),int(self.button[str(x)+" "+str(y)][0])+30,float(self.button[str(x)+" "+str(y)][1])+32.5)
+                                            elif self.pawn == 2:
+                                                self.xo[x][y]=2
+                                                print(self.xo)
+                                                self.proxy.input(self.xo)
+                                                # print(self.xo)
+                                                # self.createText("O","freesansbold.ttf",50,(0,0,0),int(self.button[str(x)+" "+str(y)][0])+30,float(self.button[str(x)+" "+str(y)][1])+32.5)
+                                            self.drawbox("",20,"freesansbold.ttf",(255,255,255),(800),(100),350,200,(0,0,0),(150,150,150))
+                                        else:
+                                            print("Jangan Klik Board Lain Bro")
                                 else:
                                     temptext = threading.Thread(target=self.createTempText, args=(1,"Already Filled","freesansbold.ttf",50,(255,255,255),975,200))
                                     temptext.start()
