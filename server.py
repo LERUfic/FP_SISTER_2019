@@ -1,6 +1,8 @@
 import Pyro4
 import sys
 import random
+import pickle
+from pathlib import Path
 
 namainstance = sys.argv[1] or "fileserver"
 
@@ -16,12 +18,22 @@ class FileServer(object):
         # self.board[8][5] = 2
         # self.board[7][6] = 2
         # self.board[1][7] = 2
-        return self.board
+        # 
+        my_file = Path("board_data.db")
+        if my_file.is_file():
+            with open('board_data.db','rb') as f:
+                self.board = pickle.load(f)
+        else:
+            self.board = [[None for j in range(9)] for i in range(9)]
+            with open('board_data.db','wb') as f:
+                pickle.dump(self.board,f, pickle.HIGHEST_PROTOCOL)
 
+        return self.board
 
     def inputboard(self, newboard):
         self.board = newboard
-        return "updated"
+        with open('board_data.db','wb') as f:
+            pickle.dump(self.board,f, pickle.HIGHEST_PROTOCOL)
 
 def start_with_ns():
     #name server harus di start dulu dengan  pyro4-ns -n localhost -p 7777

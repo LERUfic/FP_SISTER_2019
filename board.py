@@ -136,7 +136,9 @@ class TicTacToe:
         pygame.display.update()
         
         if self.current_board != None:
+            print("check")
             pemenang = self.current_board.checkWinner(self.xo)
+            print(pemenang)
             if pemenang != None:
                 # POP UP PEMENANG
                 saving_data = player.Player()
@@ -158,6 +160,8 @@ class TicTacToe:
         popuptext=None
         self.drawbox("",20,"freesansbold.ttf",(255,255,255),(800),(100),350,200,(0,0,0),(150,150,150))
         while running:
+            if self.current_board == None and self.board_id != None:
+                self.current_board = singleboard.SingleBoard(self.board_id)
             self.updateBoard()
             for event in pygame.event.get():
                 if event.type==pygame.QUIT:
@@ -188,12 +192,6 @@ class TicTacToe:
                                         saving_data.setBoardID(str(self.board_id))
                                         saving_data.setPawn(str(self.pawn))
                                         saving_data.saveData()
-
-                                    #ini buat yang sudah join atau diskonek
-                                    else:
-                                        #buat yang diskonek
-                                        if self.current_board == None:
-                                            self.current_board = singleboard.SingleBoard(self.board_id)
 
                                     my_turn = self.current_board.isMyTurn(self.xo)
                                     # pieces = self.current_board.countBoard(self.xo)
