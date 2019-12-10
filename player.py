@@ -21,7 +21,6 @@ class Player:
             self.configs.write(configfile)
 
     def resetData(self):
-        self.configs['DEFAULT']['PLAYERID'] = str(uuid.uuid1())
         self.configs['DEFAULT']['GAME_STATUS'] = '0'
         self.configs['DEFAULT']['BOARD_ID'] = '-1'
         self.configs['DEFAULT']['PAWN'] = '0'
