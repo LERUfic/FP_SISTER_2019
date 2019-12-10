@@ -143,7 +143,7 @@ class TicTacToe:
         '''
         We can print the message to the board or pop-up windows but not a chance we will print it on just terminal.
         '''
-        # print(message)
+        print(message)
 
     def setFromLoad(self,boid,prev_pawn):
         self.board_id = boid
@@ -191,9 +191,9 @@ class TicTacToe:
                                             self.current_board = singleboard.SingleBoard(self.board_id)
 
                                     my_turn = self.current_board.isMyTurn(self.xo)
-                                    pieces = self.current_board.countBoard(self.xo)
-                                    print(pieces)
-                                    print(self.xo)
+                                    # pieces = self.current_board.countBoard(self.xo)
+                                    # print(pieces)
+                                    # print(self.xo)
 
                                     if not my_turn:
                                         print('Bukan giliranmu bro')
