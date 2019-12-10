@@ -10,9 +10,9 @@ namainstance = sys.argv[1] or "fileserver"
 class FileServer(object):
     def __init__(self):
         self.board = [[None for j in range(9)] for i in range(9)]
-        self.boardplayer = [[None,None],[None,None],[None,None],
-                            [None,None],[None,None],[None,None],
-                            [None,None],[None,None],[None,None]]
+        self.boardplayer = [[None,None,None],[None,None,None],[None,None,None],
+                            [None,None,None],[None,None,None],[None,None,None],
+                            [None,None,None],[None,None,None],[None,None,None]]
 
     def coba2(self):
         return "bisa fileserver"
@@ -39,9 +39,9 @@ class FileServer(object):
             with open('board_playerdata.db','rb') as f:
                 self.boardplayer = pickle.load(f)
         else:
-            self.boardplayer = [[None,None],[None,None],[None,None],
-                                [None,None],[None,None],[None,None],
-                                [None,None],[None,None],[None,None]]
+            self.boardplayer = [[None,None,None],[None,None,None],[None,None,None],
+                                [None,None,None],[None,None,None],[None,None,None],
+                                [None,None,None],[None,None,None],[None,None,None]]
             with open('board_playerdata.db','wb') as f:
                 pickle.dump(self.boardplayer,f, pickle.HIGHEST_PROTOCOL)
 

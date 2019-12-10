@@ -32,9 +32,9 @@ class TicTacToe:
         self.current_board = None
         self.c = clientproxy()
         self.proxy = self.c.connect()
-        self.boardplayer = [[None,None],[None,None],[None,None],
-                            [None,None],[None,None],[None,None],
-                            [None,None],[None,None],[None,None]]
+        self.boardplayer = [[None,None,None],[None,None,None],[None,None,None],
+                            [None,None,None],[None,None,None],[None,None,None],
+                            [None,None,None],[None,None,None],[None,None,None]]
         self.myplayerid = None
 
     def createBoard(self):
