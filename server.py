@@ -12,6 +12,9 @@ class FileServer(object):
         self.board = [[None for j in range(9)] for i in range(9)]
         self.f=replication()
         self.replica=self.f.connect()
+        self.boardplayer = [[None,None,None],[None,None,None],[None,None,None],
+                            [None,None,None],[None,None,None],[None,None,None],
+                            [None,None,None],[None,None,None],[None,None,None]]
 
     def coba2(self):
         return "bisa fileserver"
@@ -32,12 +35,31 @@ class FileServer(object):
 
         return self.board
 
-    def inputboard(self, newboard):
+    def getserver_boardplayer(self):
+        my_file = Path("board_playerdata.db")
+        if my_file.is_file():
+            with open('board_playerdata.db','rb') as f:
+                self.boardplayer = pickle.load(f)
+        else:
+            self.boardplayer = [[None,None,None],[None,None,None],[None,None,None],
+                                [None,None,None],[None,None,None],[None,None,None],
+                                [None,None,None],[None,None,None],[None,None,None]]
+            with open('board_playerdata.db','wb') as f:
+                pickle.dump(self.boardplayer,f, pickle.HIGHEST_PROTOCOL)
+
+        return self.boardplayer
+
+    def inputboard(self, newboard,boardplayer):
         self.board = newboard
         with open('board_data.db','wb') as f:
             pickle.dump(self.board,f, pickle.HIGHEST_PROTOCOL)
         print(namainstance)
         self.replica.consistency(namainstance,self.board)
+
+        self.boardplayer = boardplayer
+        with open('board_playerdata.db','wb') as f:
+            pickle.dump(self.boardplayer,f, pickle.HIGHEST_PROTOCOL)
+
 
 def start_with_ns():
     #name server harus di start dulu dengan  pyro4-ns -n localhost -p 7777

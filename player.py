@@ -1,4 +1,5 @@
 import configparser
+import uuid
 
 class Player:
     def __init__(self):
@@ -7,6 +8,7 @@ class Player:
             with open('config.ini', 'r') as fh:
                 self.configs.read('config.ini')        
         except FileNotFoundError:
+            self.configs['DEFAULT']['PLAYERID'] = str(uuid.uuid1())
             self.configs['DEFAULT']['GAME_STATUS'] = '0'
             self.configs['DEFAULT']['BOARD_ID'] = '-1'
             self.configs['DEFAULT']['PAWN'] = '0'
@@ -36,6 +38,9 @@ class Player:
 
     def getPawn(self):
         return self.configs['DEFAULT']['PAWN']
+
+    def getPlayerID(self):
+        return self.configs['DEFAULT']['PLAYERID']
 
     def setGameStatus(self,game_status):
         self.configs['DEFAULT']['GAME_STATUS'] = game_status

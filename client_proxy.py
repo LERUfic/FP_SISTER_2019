@@ -23,15 +23,25 @@ class proxy(object):
                 break
         return server.getserver_board()
 
-    # def update(self):
-    #     p = Pyro()
-    #     return p.updateserver()
+    def getboardplayer(self):
+        return self.server.getserver_boardplayer()
 
-    def input(self, board):
+    def update(self):
+        p = Pyro()
+        return p.updateserver()
+
+    def input(self, board,boardplayer):
         while True:
             if konek == 1:
                 break
-        return server.inputboard(board)
+        return self.server.inputboard(board,boardplayer)
+
+class fileserver:
+    def connect(self):
+        uri = "PYRONAME:fileserver@localhost:7777"
+        gserver = Pyro4.Proxy(uri)
+        return gserver
+
 
 def start_with_ns():
     #name server harus di start dulu dengan  pyro4-ns -n localhost -p 7777

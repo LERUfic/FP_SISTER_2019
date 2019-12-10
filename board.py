@@ -27,11 +27,15 @@ class TicTacToe:
         self.board_loc=[[0,2,0,2],[3,5,0,2],[6,8,0,2],
                         [0,2,3,5],[3,5,3,5],[6,8,3,5],
                         [0,2,6,8],[3,5,6,8],[6,8,6,8]]
-        self.pawn = -1
-        self.board_id = 0
+        self.pawn = 0
+        self.board_id = -1
         self.current_board = None
         self.c = clientproxy()
         self.proxy = self.c.connect()
+        self.boardplayer = [[None,None,None],[None,None,None],[None,None,None],
+                            [None,None,None],[None,None,None],[None,None,None],
+                            [None,None,None],[None,None,None],[None,None,None]]
+        self.myplayerid = None
 
     def createBoard(self):
         self.createText("TicTacToe Gan","freesansbold.ttf",50,(0,0,0),640,50)
@@ -45,7 +49,8 @@ class TicTacToe:
                 self.button[str(x)+' '+str(y)]=pygame.draw.rect(self.screen, (176, 175, 178),(x1,self.y0,60,60))
                 x1=x1+65
             self.y0=self.y0+65
-        pygame.display.update()
+        self.y0=100
+        # pygame.display.update()
 
     def text_objects(self, text,font,color):
         textSurface = font.render(text,True,color)
@@ -123,8 +128,23 @@ class TicTacToe:
 
         return board
 
+    def getLatestBoardPlayer(self):
+        boardplayer = self.proxy.getboardplayer()
+        return boardplayer
+
     def updateBoard(self):
         self.xo = self.getLatestBoard()
+        self.boardplayer = self.getLatestBoardPlayer()
+
+        if self.boardplayer[self.board_id][self.pawn] != self.myplayerid:
+            saving_data = player.Player()
+            saving_data.resetData()
+            saving_data.loadData()
+            temp_boid = int(saving_data.getBoardID())
+            temp_pawn = int(saving_data.getPawn())
+            self.setFromLoad(temp_boid,temp_pawn)
+
+        self.createBoard()
 
         for y in range(9):
             for x in range(9):
@@ -142,6 +162,10 @@ class TicTacToe:
                 print(pemenang)
                 saving_data = player.Player()
                 saving_data.resetData()
+                saving_data.loadData()
+                temp_boid = int(saving_data.getBoardID())
+                temp_pawn = int(saving_data.getPawn())
+                self.setFromLoad(temp_boid,temp_pawn)
 
     def popUpMsg(self,message):
         '''
@@ -153,13 +177,16 @@ class TicTacToe:
         self.board_id = boid
         self.pawn = prev_pawn
 
+    def setPlayerID(self,playerid):
+        self.myplayerid=playerid
+
     def playListener(self):
         running = True
         popupbox=None
         popuptext=None
         self.drawbox("",20,"freesansbold.ttf",(255,255,255),(800),(100),350,200,(0,0,0),(150,150,150))
         while running:
-            if self.current_board == None and self.board_id != None:
+            if self.current_board == None and self.board_id != -1:
                 self.current_board = singleboard.SingleBoard(self.board_id)
                 self.current_board.reJoin(self.pawn)
             self.updateBoard()
@@ -180,10 +207,9 @@ class TicTacToe:
                                     # 
                                     
                                     #Ini buat yang pertama kali join
-                                    if self.pawn == -1:
-                                        
-                                        idboard=self.update_board_status(x,y)
-                                        print(idboard)
+                                    idboard=self.update_board_status(x,y)
+                                    if self.pawn == 0:
+                                        # print(idboard)
                                         self.current_board = singleboard.SingleBoard(idboard)
                                         self.pawn = self.current_board.joinGame(self.xo)
                                         self.board_id = idboard
@@ -194,26 +220,31 @@ class TicTacToe:
                                         saving_data.saveData()
 
                                     my_turn = self.current_board.isMyTurn(self.xo)
-                                    pieces = self.current_board.countPieces(self.xo)
-                                    print(pieces)
+                                    # pieces = self.current_board.countPieces(self.xo)
+                                    # print(pieces)
                                     # print(self.xo)
 
                                     if not my_turn:
                                         print('Bukan giliranmu bro')
                                     else:
-                                        if self.pawn == 1:
-                                            self.xo[x][y]=1
-                                            print(self.xo)
-                                            self.proxy.input(self.xo)
-                                            # self.update_board_status(x,y)
-                                            # self.createText("X","freesansbold.ttf",50,(0,0,0),int(self.button[str(x)+" "+str(y)][0])+30,float(self.button[str(x)+" "+str(y)][1])+32.5)
-                                        elif self.pawn == 2:
-                                            self.xo[x][y]=2
-                                            print(self.xo)
-                                            self.proxy.input(self.xo)
-                                            # print(self.xo)
-                                            # self.createText("O","freesansbold.ttf",50,(0,0,0),int(self.button[str(x)+" "+str(y)][0])+30,float(self.button[str(x)+" "+str(y)][1])+32.5)
-                                        self.drawbox("",20,"freesansbold.ttf",(255,255,255),(800),(100),350,200,(0,0,0),(150,150,150))
+                                        if self.current_board.getMyBoardID() == idboard:
+                                            if self.pawn == 1:
+                                                self.xo[x][y]=1
+                                                print(self.xo)
+                                                self.boardplayer[self.board_id][self.pawn]=self.myplayerid
+                                                self.proxy.input(self.xo,self.boardplayer)
+                                                # self.update_board_status(x,y)
+                                                # self.createText("X","freesansbold.ttf",50,(0,0,0),int(self.button[str(x)+" "+str(y)][0])+30,float(self.button[str(x)+" "+str(y)][1])+32.5)
+                                            elif self.pawn == 2:
+                                                self.xo[x][y]=2
+                                                print(self.xo)
+                                                self.boardplayer[self.board_id][self.pawn]=self.myplayerid
+                                                self.proxy.input(self.xo,self.boardplayer)
+                                                # print(self.xo)
+                                                # self.createText("O","freesansbold.ttf",50,(0,0,0),int(self.button[str(x)+" "+str(y)][0])+30,float(self.button[str(x)+" "+str(y)][1])+32.5)
+                                            self.drawbox("",20,"freesansbold.ttf",(255,255,255),(800),(100),350,200,(0,0,0),(150,150,150))
+                                        else:
+                                            print("Jangan Klik Board Lain Bro")
                                 else:
                                     temptext = threading.Thread(target=self.createTempText, args=(1,"Already Filled","freesansbold.ttf",50,(255,255,255),975,200))
                                     temptext.start()
@@ -233,6 +264,7 @@ def main():
     #Load Previous Data
     _player.loadData()
     is_played = _player.getGameStatus()
+    myBoard.setPlayerID(_player.getPlayerID())
     if is_played == '1':
         temp_boid = int(_player.getBoardID())
         temp_pawn = int(_player.getPawn())
