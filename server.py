@@ -49,16 +49,19 @@ class FileServer(object):
 
         return self.boardplayer
 
-    def inputboard(self, newboard,boardplayer):
+    def inputboard(self, newboard,boardplayer,darimana=1):
         self.board = newboard
+        self.boardplayer = boardplayer
+        # print(namainstance)
+
         with open('board_data.db','wb') as f:
             pickle.dump(self.board,f, pickle.HIGHEST_PROTOCOL)
-        print(namainstance)
-        self.replica.consistency(namainstance,self.board)
-
-        self.boardplayer = boardplayer
+        
         with open('board_playerdata.db','wb') as f:
             pickle.dump(self.boardplayer,f, pickle.HIGHEST_PROTOCOL)
+
+        if darimana == 1 :
+            self.replica.consistency(namainstance,self.board,self.boardplayer)
 
 
 def start_with_ns():

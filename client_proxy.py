@@ -8,7 +8,7 @@ import threading
 
 namainstance = "clientproxy"
 list_fserver = ['fileserver1','fileserver2','fileserver3']
-uri_now = ''
+uri_now = "PYRONAME:@"
 server = ''
 konek = 0
 
@@ -19,29 +19,34 @@ class proxy(object):
 
     def getboard(self):
         while True:
-            if konek == 1:
-                break
-        return server.getserver_board()
+            try:
+                kungking = server.getserver_board()
+                return kungking
+            except (Pyro4.errors.ConnectionClosedError,Pyro4.naming.NamingError,Pyro4.errors.CommunicationError,Pyro4.errors.PyroError) as e:
+                pass
 
     def getboardplayer(self):
-        return self.server.getserver_boardplayer()
+        while True:
+            try:
+                kungking = server.getserver_boardplayer()
+                return kungking
+            except (Pyro4.errors.ConnectionClosedError,Pyro4.naming.NamingError,Pyro4.errors.CommunicationError,Pyro4.errors.PyroError) as e:
+                pass
 
     def update(self):
         p = Pyro()
         return p.updateserver()
 
+    def getStatus(self):
+        return konek
+
     def input(self, board,boardplayer):
         while True:
-            if konek == 1:
-                break
-        return self.server.inputboard(board,boardplayer)
-
-class fileserver:
-    def connect(self):
-        uri = "PYRONAME:fileserver@localhost:7777"
-        gserver = Pyro4.Proxy(uri)
-        return gserver
-
+            try:
+                kungking = server.inputboard(board,boardplayer)
+                return kungking
+            except (Pyro4.errors.ConnectionClosedError,Pyro4.naming.NamingError,Pyro4.errors.CommunicationError,Pyro4.errors.PyroError) as e:
+                pass
 
 def start_with_ns():
     #name server harus di start dulu dengan  pyro4-ns -n localhost -p 7777
@@ -67,10 +72,12 @@ def connect():
         if uri != 0:
             gserver = Pyro4.Proxy(uri)
             uri_now = uri
+            print(uri_now)
             print("connected!")
             konek = 1
+            print("konek="+str(konek))
             return gserver
-        time.sleep(1)
+        # time.sleep(1)
 
 def ping_ack(a):
     global uri_now
@@ -80,10 +87,13 @@ def ping_ack(a):
         with Pyro4.Proxy(uri_now) as p:
             try:
                 p._pyroBind()
-            except (Pyro4.naming.NamingError,Pyro4.errors.CommunicationError) as e:
+            except (Pyro4.naming.NamingError,Pyro4.errors.CommunicationError,Pyro4.errors.PyroError) as e:
                 print("server disconected!")
                 konek = 0
+                print("konek="+str(konek))
                 server=connect()
+                konek = 1
+                print("konek="+str(konek))
 
 def fserver_availibility():
     for x in list_fserver:
@@ -95,16 +105,14 @@ def fserver_availibility():
                 p._pyroBind()
                 # print("ada")
                 oke = 1
-            except (Pyro4.naming.NamingError,Pyro4.errors.CommunicationError) as e:
-                # print("ga ada")
-        # print(oke)
+            except (Pyro4.naming.NamingError,Pyro4.errors.CommunicationError,Pyro4.errors.PyroError) as e:
+                pass
         if oke == 1:
             return uri
     return 0
 
 
 if __name__ == '__main__':
-    server=connect()
     ack = threading.Thread(target=ping_ack, args=(1,))
     ack.start()
 

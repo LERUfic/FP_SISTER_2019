@@ -1,7 +1,7 @@
 import Pyro4
 import sys
 
-namainstance = sys.argv[1] or "rm"
+namainstance = "rm"
 serverlist=[]
 
 class FileServer(object):
@@ -9,7 +9,8 @@ class FileServer(object):
         pass
 
     def add_server(self, server_name):
-        serverlist.append(server_name)
+        if server_name not in serverlist:
+            serverlist.append(server_name)
 
     def get_serverlist(self):
         return serverlist
@@ -19,13 +20,13 @@ class FileServer(object):
         replserver = Pyro4.Proxy(uri)
         return replserver
 
-    def consistency(self, from_server, board):
+    def consistency(self, from_server, board, boardplayer):
         for server in serverlist:
-            print(str(server))
+            # print(str(server))
             if str(server) != str(from_server):
-                print(str(server))
+                # print(str(server))
                 fserver = self.another_server(server)
-                fserver.inputboard(board)
+                fserver.inputboard(board,boardplayer,0)
         return "ok"
 
 
